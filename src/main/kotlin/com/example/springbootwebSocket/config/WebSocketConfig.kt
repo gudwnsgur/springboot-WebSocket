@@ -15,6 +15,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer // 인터페이스를 �
     // Websocket 연결을 위한 엔드포인트를 지정
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws").withSockJS()
+        // withSockJS() 는 웹소켓을 지원하지 않는 브라우저에 폴백 옵션을 활성화하는데 사용
     }
 
     // 메시지 주고 받을 엔드포인트에 대한 Prefix 지정

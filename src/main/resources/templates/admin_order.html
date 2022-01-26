@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns: th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>퍼드림 관리자 페이지 - 주문받기</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<div>
+    <div id="order_list"></div>
+</div>
+<script>
+    $(document).ready(function () {
+        const orders = $("#order_list");
+        const socket = new SockJS('/stomp');
+        const stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            stompClient.subscribe("/topic/order", function (data) {
+                const order = data.body;
+                orders.append(order);
+            });
+        });
+    });
+</script>
+</body>
+</html>

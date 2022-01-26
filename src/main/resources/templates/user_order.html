@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" xmlns: th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>퍼드림 사용자 페이지 - 주문하기</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+
+<body>
+    <div id="container" style="width: 30%; height: 80px; margin-left: 30%; margin-top: 10%;" >
+        <form class="form-signin" id="order_form">
+            <h2>주문</h2>
+            <input type="number" id="product_id" placeholder="product id">
+            <button id="submit" type="button">주문하기</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const socket = new SockJS('/stomp');
+            const stompClient = Stomp.over(socket);
+            stompClient.connect();
+        });
+
+        $('#submit').on("click",function () {
+            const orders = {
+                product_id: $("#product_id").val()
+            };
+            console.log(JSON.stringify(orders))
+            $.ajax({
+                type: "post",
+                url: "/user/order",
+                data: JSON.stringify(orders),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(data) {
+                    sendOrderToAdmin(data)
+                },
+                error: function (request, status, error) {
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+
+        });
+
+        function sendOrderToAdmin(order) {
+            $.ajax({
+                url : '/send/order',
+                data: JSON.stringify(order),
+                dataType: 'json',
+                contentType: 'application/json',
+                type : 'post'
+            });
+        }
+    </script>
+</body>
+</html>
